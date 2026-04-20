@@ -1,0 +1,28 @@
+{
+  "cores": {
+    "portal": {
+      "label": "Portal",
+      "source": "https://prod.spline.design/6gLzKECAHFiBl-Ld/scene.splinecode",
+      "source_spline_design": "/Users/karmaswoop/AI-Local/iris_v3_companion/spline_sources/interactive_portal.spline"
+    },
+    "remix": {
+      "label": "Remix",
+      "source": "https://prod.spline.design/Na9Vsmb2CvZ8xLkc/scene.splinecode",
+      "source_spline_design": "/Users/karmaswoop/AI-Local/iris_v3_companion/spline_sources/particles_remix.spline"
+    },
+    "sphere": {
+      "label": "Sphere",
+      "source": "https://prod.spline.design/o3bbOG-DOrfmhY-e/scene.splinecode",
+      "source_spline_design": "/Users/karmaswoop/AI-Local/iris_v3_companion/spline_sources/sphere_of_particles.spline"
+    }
+  },
+  "modeCore": {
+    "normal": "remix",
+    "travail": "sphere",
+    "veille": "portal",
+    "autopilot": "sphere",
+    "alerte": "portal",
+    "success": "remix"
+  },
+  "active": "portal"
+}

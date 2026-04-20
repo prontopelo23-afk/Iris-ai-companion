@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -euo pipefail
+BASE="$HOME/AI-Local/iris_v3_companion"
+CONFIG="$BASE/ui/core-config.json"
+
+if [ $# -lt 2 ]; then
+  echo "Usage: iris-v6-set-core <portal|remix|sphere> <source>"
+  echo "Exemple: iris-v6-set-core sphere ~/Downloads/sphere_export/scene.splinecode"
+  exit 1
+fi
+
+CORE="$1"
+shift
+SOURCE="$*"
+
+python3 - "$CORE" "$SOURCE" "$CONFIG" <<'PY'
+import json, pathlib, sys
+core, source, config_path = sys.argv[1], sys.argv[2], pathlib.Path(sys.argv[3])
+if core not in {"portal","remix","sphere"}:
+    raise SystemExit("Core invalide. Utilise portal, remix ou sphere.")
+cfg = json.loads(config_path.read_text(encoding="utf-8"))
+p = pathlib.Path(source).expanduser()
+cfg["cores"][core]["source"] = str(p) if p.exists() else source
+config_path.write_text(json.dumps(cfg, indent=2, ensure_ascii=False), encoding="utf-8")
+print(f"{core} => {cfg['cores'][core]['source']}")
+PY
+
+echo "Core enregistré."
+if [ -x "$BASE/bin/iris-v3-stop" ] && [ -x "$BASE/bin/iris-v3-start" ]; then
+  "$BASE/bin/iris-v3-stop" >/dev/null 2>&1 || true
+  sleep 1
+  "$BASE/bin/iris-v3-start" >/dev/null 2>&1 || true
+fi

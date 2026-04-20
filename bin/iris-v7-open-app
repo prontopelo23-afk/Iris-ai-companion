@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+URL="http://127.0.0.1:8876/"
+if [ -d "/Applications/Opera.app" ]; then
+  open -na "/Applications/Opera.app" --args --app="$URL"
+elif [ -d "/Applications/Google Chrome.app" ]; then
+  open -na "/Applications/Google Chrome.app" --args --app="$URL"
+elif [ -d "/Applications/Microsoft Edge.app" ]; then
+  open -na "/Applications/Microsoft Edge.app" --args --app="$URL"
+else
+  open "$URL"
+fi

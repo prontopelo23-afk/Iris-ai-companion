@@ -1,0 +1,7 @@
+#!/bin/bash
+set -euo pipefail
+launchctl bootout "gui/$(id -u)" "/Users/karmaswoop/Library/LaunchAgents/com.iris.v3.companion.plist" >/dev/null 2>&1 || true
+launchctl bootstrap "gui/$(id -u)" "/Users/karmaswoop/Library/LaunchAgents/com.iris.v3.companion.plist" >/dev/null 2>&1 || true
+launchctl kickstart -k "gui/$(id -u)/com.iris.v3.companion" >/dev/null 2>&1 || true
+sleep 2
+echo "IRIS v3 lancé sur http://127.0.0.1:8876"

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+TARGET="$HOME/AI-Local/iris_v3_companion/spline_sources"
+echo "$TARGET"
+open "$TARGET" 2>/dev/null || true

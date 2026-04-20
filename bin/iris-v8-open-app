@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+URL="http://127.0.0.1:8876/"
+CANDIDATES=(
+  "Google Chrome"
+  "Microsoft Edge"
+  "Brave Browser"
+  "Chromium"
+  "Opera"
+  "Opera One"
+)
+
+for APP in "${CANDIDATES[@]}"; do
+  if [ -d "/Applications/$APP.app" ] || [ -d "$HOME/Applications/$APP.app" ]; then
+    open -na "$APP" --args --app="$URL" --new-window >/dev/null 2>&1 && exit 0
+  fi
+done
+
+/usr/bin/open "$URL"

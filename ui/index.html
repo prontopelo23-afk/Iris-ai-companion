@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IRIS · APERTURE CORE V3.0</title>
+<meta name="color-scheme" content="light">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&family=Orbitron:wght@300;400;700;900&display=swap');
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body {
+  width:100%; height:100%;
+  background:#f3f3f1;
+  color:rgba(10,10,10,.8);
+  font-family:'Share Tech Mono',monospace;
+  overflow:hidden;
+  cursor:none;
+}
+
+button, input { font: inherit; }
+[hidden] { display:none !important; }
+
+/* CURSOR */
+#cur  { position:fixed; width:7px; height:7px; background:#111; border-radius:50%; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); transition:background .5s; }
+#ring { position:fixed; width:30px; height:30px; border:1px solid #111; border-radius:50%; pointer-events:none; z-index:9998; transform:translate(-50%,-50%); opacity:.3; transition:border-color .5s,width .18s,height .18s,opacity .18s; }
+#ring.h { width:44px; height:44px; opacity:.65; }
+
+/* BREATHE */
+#breath { position:fixed; inset:0; background:radial-gradient(ellipse 58% 48% at 50% 50%,rgba(195,195,190,.6),transparent 70%); animation:br 5s ease-in-out infinite; pointer-events:none; z-index:0; }
+@keyframes br { 0%,100%{transform:scale(1);opacity:.5} 50%{transform:scale(1.07);opacity:1} }
+
+/* LAYOUT */
+#app { position:fixed; inset:0; display:grid; grid-template-rows:54px 1fr 86px; z-index:1; }
+
+/* TOP */
+#top { display:flex; align-items:center; justify-content:space-between; padding:0 26px; border-bottom:1px solid rgba(0,0,0,.07); background:rgba(243,243,241,.8); backdrop-filter:blur(20px); z-index:200; gap:16px; }
+#logo { display:flex; align-items:center; gap:12px; cursor:none; min-width:0; }
+#logo .iris-logo-slot { width:30px; height:30px; flex:0 0 auto; }
+.iris-logo-slot svg { width:100%; height:100%; display:block; }
+#wm { font-family:'Orbitron',monospace; font-weight:900; font-size:14px; letter-spacing:.35em; color:#111; transition:color .7s; }
+#wsub { font-size:7px; letter-spacing:.2em; color:rgba(10,10,10,.28); font-family:'Rajdhani',sans-serif; margin-top:1px; }
+
+#chips { display:flex; gap:18px; flex-wrap:wrap; justify-content:center; }
+.chip { display:flex; align-items:center; gap:5px; font-size:7px; letter-spacing:.18em; color:rgba(10,10,10,.28); font-family:'Rajdhani',sans-serif; font-weight:600; text-transform:uppercase; }
+.dot  { width:4px; height:4px; border-radius:50%; background:#111; animation:dp 2.5s ease-in-out infinite; transition:background .7s; }
+@keyframes dp { 0%,100%{opacity:1} 50%{opacity:.15} }
+
+#mbtn { background:none; border:1px solid rgba(0,0,0,.15); padding:6px 13px; font-size:7px; letter-spacing:.2em; font-family:'Rajdhani',sans-serif; font-weight:700; color:rgba(10,10,10,.3); cursor:none; transition:background .2s,color .2s,border-color .2s; text-transform:uppercase; }
+#mbtn:hover { background:rgba(0,0,0,.04); color:rgba(10,10,10,.8); border-color:rgba(0,0,0,.24); }
+
+/* MAIN */
+#main { position:relative; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+#main::after { content:''; position:absolute; inset:0; background:radial-gradient(ellipse 88% 88% at 50% 50%,transparent 36%,rgba(228,228,224,.6) 100%); pointer-events:none; z-index:2; }
+#orb { position:absolute; inset:0; z-index:1; }
+
+/* CORNERS */
+.cor { position:absolute; width:14px; height:14px; z-index:10; opacity:.15; }
+.cor.tl{top:13px;left:13px;border-top:1px solid #000;border-left:1px solid #000}
+.cor.tr{top:13px;right:13px;border-top:1px solid #000;border-right:1px solid #000}
+.cor.bl{bottom:13px;left:13px;border-bottom:1px solid #000;border-left:1px solid #000}
+.cor.br{bottom:13px;right:13px;border-bottom:1px solid #000;border-right:1px solid #000}
+
+/* SIDE STATS */
+#sl { position:absolute; left:24px; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:18px; z-index:10; }
+#sr { position:absolute; right:24px; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:18px; align-items:flex-end; z-index:10; }
+.sb { display:flex; flex-direction:column; gap:2px; max-width:170px; }
+.slb { font-size:7px; letter-spacing:.25em; color:rgba(10,10,10,.25); font-family:'Rajdhani',sans-serif; font-weight:600; text-transform:uppercase; }
+.sv  { font-size:22px; font-family:'Orbitron',monospace; font-weight:300; color:#111; line-height:1; transition:color .7s; }
+.su  { font-size:8px; color:rgba(10,10,10,.25); }
+.st  { font-size:8px; font-family:'Rajdhani',sans-serif; font-weight:700; letter-spacing:.15em; color:#111; transition:color .7s; text-transform:uppercase; }
+.btr { width:64px; height:1px; background:rgba(0,0,0,.07); }
+.bfl { height:100%; background:#111; transition:width 1s,background .7s; }
+
+/* GHOST NAME */
+#gname { position:absolute; font-family:'Orbitron',monospace; font-weight:900; font-size:clamp(60px,11vw,120px); color:rgba(0,0,0,.022); pointer-events:none; z-index:0; letter-spacing:-.02em; top:50%; left:50%; transform:translate(-50%,-52%); transition:opacity .7s; white-space:nowrap; }
+#slabel { position:absolute; bottom:18px; left:50%; transform:translateX(-50%); font-size:7px; letter-spacing:.32em; color:#111; font-family:'Rajdhani',sans-serif; font-weight:600; opacity:.38; z-index:10; transition:color .7s; white-space:nowrap; text-transform:uppercase; }
+
+/* BOTTOM */
+#bot { border-top:1px solid rgba(0,0,0,.07); background:rgba(243,243,241,.8); backdrop-filter:blur(20px); padding:8px 26px 12px; z-index:200; }
+#msgs { max-height:32px; overflow:hidden; }
+.msg { display:flex; gap:10px; align-items:baseline; animation:mi .28s ease; }
+@keyframes mi { from{opacity:0;transform:translateY(2px)} to{opacity:1;transform:none} }
+.mr  { font-size:7px; letter-spacing:.22em; color:rgba(10,10,10,.25); font-family:'Rajdhani',sans-serif; font-weight:700; min-width:32px; text-transform:uppercase; }
+.mr.i{ color:#111; transition:color .7s; }
+.mb  { font-size:11px; color:rgba(10,10,10,.8); font-family:'Rajdhani',sans-serif; }
+
+#irow { display:flex; align-items:center; gap:8px; margin-top:5px; padding-top:5px; border-top:1px solid rgba(0,0,0,.07); }
+#ipfx { font-size:12px; color:#111; font-family:'Orbitron',monospace; transition:color .7s; }
+#inp  { flex:1; background:transparent; border:none; outline:none; color:rgba(10,10,10,.8); font-family:'Share Tech Mono',monospace; font-size:11px; caret-color:#111; cursor:none; }
+#inp::placeholder { color:rgba(10,10,10,.22); }
+#vbtn { background:none; border:none; cursor:none; color:rgba(10,10,10,.28); display:flex; align-items:center; transition:color .2s; }
+#vbtn:hover,#vbtn.on { color:#111; }
+#vbtn.on { animation:dp 1s infinite; }
+#sbtn { background:none; border:1px solid rgba(0,0,0,.14); color:rgba(10,10,10,.28); font-family:'Rajdhani',sans-serif; font-weight:700; font-size:7px; letter-spacing:.22em; padding:5px 10px; cursor:none; transition:background .2s,color .2s,border-color .2s; text-transform:uppercase; }
+#sbtn:hover { background:rgba(0,0,0,.04); color:rgba(10,10,10,.8); border-color:rgba(0,0,0,.24); }
+
+/* PANEL */
+#panel { position:fixed; inset:0; background:rgba(243,243,241,.97); backdrop-filter:blur(32px); z-index:500; opacity:0; pointer-events:none; transition:opacity .35s; display:flex; flex-direction:column; }
+#panel.on { opacity:1; pointer-events:all; }
+#ph { display:flex; align-items:center; justify-content:space-between; padding:17px 26px; border-bottom:1px solid rgba(0,0,0,.07); }
+#pt { font-family:'Orbitron',monospace; font-weight:700; font-size:9px; letter-spacing:.32em; color:#111; transition:color .7s; text-transform:uppercase; }
+#pcl { background:none; border:1px solid rgba(0,0,0,.12); cursor:none; font-size:7px; letter-spacing:.2em; color:rgba(10,10,10,.3); font-family:'Rajdhani',sans-serif; font-weight:700; padding:5px 11px; transition:color .2s,border-color .2s; text-transform:uppercase; }
+#pcl:hover { color:rgba(10,10,10,.8); border-color:rgba(0,0,0,.24); }
+#pbod { flex:1; display:flex; overflow:hidden; }
+#pnav { width:140px; border-right:1px solid rgba(0,0,0,.07); padding:16px 0; display:flex; flex-direction:column; gap:1px; }
+.ni { padding:9px 20px; font-family:'Rajdhani',sans-serif; font-weight:700; font-size:8px; letter-spacing:.2em; color:rgba(10,10,10,.28); cursor:none; transition:color .15s,background .15s,border-color .15s; border-left:2px solid transparent; text-transform:uppercase; }
+.ni:hover { color:rgba(10,10,10,.8); background:rgba(0,0,0,.03); }
+.ni.on { color:#111; border-left-color:#111; transition:color .7s,border-color .7s; }
+#pcon { flex:1; padding:20px 26px; overflow-y:auto; scrollbar-width:none; }
+#pcon::-webkit-scrollbar { display:none; }
+.pg { display:none; }
+.pg.on { display:grid; grid-template-columns:repeat(3,1fr); gap:11px; animation:mi .3s ease; }
+.card { border:1px solid rgba(0,0,0,.08); padding:14px 16px; cursor:none; background:rgba(255,255,255,.55); position:relative; overflow:hidden; transition:border-color .2s,background .2s; }
+.card::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:#111; transform:scaleX(0); transition:transform .25s,background .7s; transform-origin:left; }
+.card:hover { border-color:rgba(0,0,0,.2); background:rgba(255,255,255,.9); }
+.card:hover::before { transform:scaleX(1); }
+.ci { font-size:15px; margin-bottom:7px; }
+.cl { font-family:'Orbitron',monospace; font-weight:700; font-size:7px; letter-spacing:.28em; color:rgba(10,10,10,.8); margin-bottom:3px; text-transform:uppercase; }
+.cd { font-family:'Rajdhani',sans-serif; font-size:9px; color:rgba(10,10,10,.35); line-height:1.4; }
+
+/* EXPLOSION CANVAS */
+#exc { position:fixed; inset:0; z-index:1000; pointer-events:none; }
+
+/* TYPING */
+.ty { display:inline-flex; gap:3px; align-items:center; }
+.ty b { display:inline-block; width:3px; height:3px; background:#111; border-radius:50%; animation:tb 1.2s infinite; transition:background .7s; }
+.ty b:nth-child(2){animation-delay:.2s} .ty b:nth-child(3){animation-delay:.4s}
+@keyframes tb { 0%,80%,100%{transform:translateY(0);opacity:.25} 40%{transform:translateY(-4px);opacity:1} }
+
+/* BOOT */
+#boot {
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(243,243,241,.94);
+  backdrop-filter:blur(18px);
+  z-index:1200;
+  transition:opacity .35s ease, visibility .35s ease;
+}
+#boot.hidden { opacity:0; visibility:hidden; pointer-events:none; }
+#bootPanel {
+  width:min(460px, calc(100vw - 48px));
+  border:1px solid rgba(0,0,0,.1);
+  border-radius:28px;
+  background:rgba(255,255,255,.55);
+  box-shadow:0 18px 60px rgba(0,0,0,.08);
+  padding:18px 18px 16px;
+}
+#bootTop {
+  display:flex;
+  justify-content:space-between;
+  gap:16px;
+  font:700 8px/1 'Rajdhani',sans-serif;
+  letter-spacing:.25em;
+  text-transform:uppercase;
+  color:rgba(10,10,10,.34);
+  margin-bottom:14px;
+}
+#bootHead {
+  display:flex;
+  gap:14px;
+  align-items:center;
+  margin-bottom:14px;
+}
+#bootHead .iris-logo-slot { width:58px; height:58px; flex:0 0 auto; }
+#bootTitle {
+  font-family:'Orbitron',monospace;
+  font-weight:900;
+  font-size:22px;
+  line-height:.92;
+  letter-spacing:-.04em;
+  color:#111;
+}
+#bootCopy { font:600 11px/1.45 'Rajdhani',sans-serif; color:rgba(10,10,10,.46); margin-top:8px; }
+#bootConsole {
+  min-height:74px;
+  border:1px solid rgba(0,0,0,.08);
+  border-radius:18px;
+  padding:12px 14px;
+  background:rgba(255,255,255,.42);
+  margin-bottom:12px;
+}
+.bootLine { font:700 10px/1.4 'Share Tech Mono',monospace; color:rgba(10,10,10,.48); }
+#bootBar { height:4px; border-radius:999px; background:rgba(0,0,0,.08); overflow:hidden; }
+#bootFill { width:12%; height:100%; background:#111; transition:width .35s ease, background .4s ease; }
+#bootMeta { display:flex; justify-content:space-between; gap:12px; margin-top:8px; font:700 8px/1 'Rajdhani',sans-serif; letter-spacing:.24em; text-transform:uppercase; color:rgba(10,10,10,.32); }
+
+@media (max-width: 980px) {
+  #app { grid-template-rows: auto 1fr 104px; }
+  #top { padding:10px 14px; flex-wrap:wrap; justify-content:center; }
+  #chips { justify-content:flex-start; width:100%; }
+  #main { padding:28px 0 16px; }
+  #sl, #sr { top:auto; transform:none; bottom:54px; gap:10px; }
+  #sl { left:14px; }
+  #sr { right:14px; }
+  #gname { font-size:clamp(42px,14vw,82px); }
+  #pnav { width:108px; }
+  .pg.on { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+<div id="cur"></div>
+<div id="ring"></div>
+<div id="breath"></div>
+<canvas id="exc"></canvas>
+
+<div id="boot">
+  <div id="bootPanel">
+    <div id="bootTop">
+      <span>IRIS SYSTEM</span>
+      <span id="bootOperator">OPERATOR // SWOOP</span>
+    </div>
+    <div id="bootHead">
+      <div class="iris-logo-slot" data-iris-logo="boot"></div>
+      <div>
+        <div id="bootTitle">IRIS System boot</div>
+        <div id="bootCopy">Réveil du bridge local et projection du noyau IRIS.</div>
+      </div>
+    </div>
+    <div id="bootConsole">
+      <div class="bootLine" id="bootLine1">[iris] initialisation du shell natif</div>
+      <div class="bootLine" id="bootLine2">[mesh] liaison du cockpit et des agents</div>
+    </div>
+    <div id="bootBar"><div id="bootFill"></div></div>
+    <div id="bootMeta">
+      <span id="bootPhase">INITIALISATION</span>
+      <span id="bootPct">12%</span>
+    </div>
+  </div>
+</div>
+
+<div id="app">
+  <div id="top">
+    <div id="logo" onmouseenter="hi()" onmouseleave="ho()">
+      <div class="iris-logo-slot" data-iris-logo="top"></div>
+      <div><div id="wm">IRIS</div><div id="wsub">APERTURE CORE · LIVE SYSTEM</div></div>
+    </div>
+    <div id="chips">
+      <div class="chip"><div class="dot" id="dot-shell"></div><span id="chip-shell">SHELL ACTIF</span></div>
+      <div class="chip"><div class="dot" id="dot-train" style="animation-delay:.6s"></div><span id="chip-train">AUTO-TRAIN</span></div>
+      <div class="chip"><div class="dot" id="dot-mesh" style="animation-delay:1.1s"></div><span id="chip-mesh">MESH 5/5</span></div>
+      <div class="chip"><div class="dot" id="dot-agents" style="animation-delay:1.6s"></div><span id="chip-agents">8 AGENTS</span></div>
+    </div>
+    <button id="mbtn" onmouseenter="hi()" onmouseleave="ho()" onclick="openPanel()">⊞ &nbsp;CONTRÔLES</button>
+  </div>
+
+  <div id="main">
+    <div class="cor tl"></div><div class="cor tr"></div>
+    <div class="cor bl"></div><div class="cor br"></div>
+    <div id="gname">IRIS</div>
+    <canvas id="orb"></canvas>
+    <div id="sl">
+      <div class="sb"><div class="slb">BRIDGE</div><div class="sv" id="sv-bridge">5<span class="su">/5</span></div></div>
+      <div class="sb"><div class="slb">AGENTS</div><div class="sv" id="sv-agents">0</div></div>
+      <div class="sb"><div class="slb">UPTIME</div><div class="sv" id="up" style="font-size:16px">00:00</div></div>
+    </div>
+    <div id="sr">
+      <div class="sb" style="align-items:flex-end">
+        <div class="slb">AUTO-TRAIN</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:2px">
+          <div class="btr"><div class="bfl" id="tbar" style="width:72%"></div></div>
+          <div class="sv" style="font-size:14px" id="trainPct">72<span class="su">%</span></div>
+        </div>
+      </div>
+      <div class="sb" style="align-items:flex-end"><div class="slb">SITES VEILLE</div><div class="sv" style="font-size:14px" id="watchSites">0</div></div>
+      <div class="sb" style="align-items:flex-end"><div class="slb">PROJET ACTIF</div><div class="st" id="lastAgent">IRIS</div></div>
+    </div>
+    <div id="slabel">◉ SYSTÈME EN LIGNE · REPOS</div>
+  </div>
+
+  <div id="bot">
+    <div id="msgs"></div>
+    <div id="irow">
+      <div id="ipfx">›</div>
+      <input id="inp" type="text" placeholder="commande · projet · scan · agent…" autocomplete="off" spellcheck="false"/>
+      <button id="vbtn" onmouseenter="hi()" onmouseleave="ho()" onclick="toggleVoice()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8"/>
+        </svg>
+      </button>
+      <button id="sbtn" onmouseenter="hi()" onmouseleave="ho()" onclick="send()">ENVOYER</button>
+    </div>
+  </div>
+</div>
+
+<div id="panel">
+  <div id="ph">
+    <div id="pt">IRIS · SYSTÈME DE CONTRÔLE</div>
+    <button id="pcl" onmouseenter="hi()" onmouseleave="ho()" onclick="closePanel()">FERMER ✕</button>
+  </div>
+  <div id="pbod">
+    <div id="pnav">
+      <div class="ni on" onclick="swPage('accueil',this)">ACCUEIL</div>
+      <div class="ni" onclick="swPage('agents',this)">AGENTS</div>
+      <div class="ni" onclick="swPage('train',this)">AUTO-TRAIN</div>
+      <div class="ni" onclick="swPage('mission',this)">MISSIONS</div>
+      <div class="ni" onclick="swPage('logs',this)">LOGS</div>
+      <div class="ni" onclick="swPage('voix',this)">VOIX</div>
+    </div>
+    <div id="pcon">
+      <div class="pg on" id="pg-accueil">
+        <div class="card" onmouseenter="hi()" onmouseleave="ho()" onclick="cfp('donne-moi le statut du projet IRIS')"><div class="ci">◈</div><div class="cl">PROJET IRIS</div><div class="cd">Statut global & missions actives</div></div>
+        <div class="card" onmouseenter="hi()" onmouseleave="ho()" onclick="runAction('watch_now','Scan lancé depuis le panneau.')"><div class="ci">⬡</div><div class="cl">SCAN</div><div class="cd">Analyse environnement système</div></div>
+        <div class="card" onmouseenter="hi()" onmouseleave="ho()" onclick="cfp('donne-moi un état général concis du système')"><div class="ci">◉</div><div class="cl">ÉTAT GÉNÉRAL</div><div class="cd">Snapshot complet du système</div></div>
+        <div class="card" onmouseenter="hi()" onmouseleave="ho()" onclick="runAction('agent_pulse_now','Pulse agents lancé.')"><div class="ci">↺</div><div class="cl">PULSE AGENTS</div><div class="cd">Synchronisation agents en cours</div></div>
+        <div class="card" onmouseenter="hi()" onmouseleave="ho()" onclick="cfp('résume la file de veille et le prochain mouvement utile')"><div class="ci">▸</div><div class="cl">FLOW</div><div class="cd">Pipeline et veille active</div></div>
+        <div class="card" onmouseenter="hi()" onmouseleave="ho()" onclick="runAction('open_native_shell','Ouverture du shell natif demandée.')"><div class="ci">≡</div><div class="cl">SHELL</div><div class="cd">Accès shell natif direct</div></div>
+      </div>
+      <div class="pg" id="pg-agents"></div>
+      <div class="pg" id="pg-train"></div>
+      <div class="pg" id="pg-mission"></div>
+      <div class="pg" id="pg-logs">
+        <div class="card" onmouseenter="hi()" onmouseleave="ho()" onclick="cfp('donne-moi les logs live utiles')"><div class="ci">≡</div><div class="cl">LOGS LIVE</div><div class="cd">Flux en temps réel</div></div>
+        <div class="card" onmouseenter="hi()" onmouseleave="ho()" onclick="cfp('quelles erreurs doivent être traitées maintenant ?')"><div class="ci">◈</div><div class="cl">ERREURS</div><div class="cd">Anomalies détectées</div></div>
+        <div class="card" onmouseenter="hi()" onmouseleave="ho()" onclick="cfp('résume les logs récents utiles')"><div class="ci">↺</div><div class="cl">EXPORT</div><div class="cd">Exporter les logs récents</div></div>
+      </div>
+      <div class="pg" id="pg-voix"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const hostedByNativeApp = new URLSearchParams(window.location.search).get('shell') === 'native' || !!window.__irisNativeBridgeAvailable;
+const nativeBridgeAvailable = Boolean(window.webkit?.messageHandlers?.irisNative);
+const IRIS_LOGO_SVG = `
+<svg viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <defs>
+    <linearGradient id="irisBg" x1="160" y1="96" x2="832" y2="944" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#101827"/>
+      <stop offset="0.5" stop-color="#070D16"/>
+      <stop offset="1" stop-color="#02050B"/>
+    </linearGradient>
+    <radialGradient id="irisCore" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(512 512) rotate(90) scale(190)">
+      <stop stop-color="#FFF7D8"/>
+      <stop offset="0.22" stop-color="#C6F5FF"/>
+      <stop offset="0.56" stop-color="#6BC8FF"/>
+      <stop offset="1" stop-color="#6BC8FF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="irisRing" x1="302" y1="512" x2="722" y2="512" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFCC7D"/>
+      <stop offset="0.52" stop-color="#A0EEFF"/>
+      <stop offset="1" stop-color="#6B8CFF"/>
+    </linearGradient>
+    <filter id="irisGlow" x="148" y="148" width="728" height="728" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="56"/>
+    </filter>
+  </defs>
+  <rect x="64" y="64" width="896" height="896" rx="224" fill="url(#irisBg)"/>
+  <rect x="84" y="84" width="856" height="856" rx="204" stroke="#FFFFFF" stroke-opacity="0.08"/>
+  <g filter="url(#irisGlow)" opacity="0.75">
+    <circle cx="512" cy="512" r="172" fill="#71D6FF"/>
+    <ellipse cx="512" cy="512" rx="242" ry="90" fill="#FFB46A" fill-opacity="0.32"/>
+  </g>
+  <circle cx="512" cy="512" r="214" fill="url(#irisCore)"/>
+  <circle cx="512" cy="512" r="208" stroke="url(#irisRing)" stroke-width="20"/>
+  <circle cx="512" cy="512" r="278" stroke="#25334A" stroke-width="10"/>
+  <ellipse cx="512" cy="512" rx="306" ry="116" stroke="url(#irisRing)" stroke-width="24"/>
+  <ellipse cx="512" cy="512" rx="346" ry="168" stroke="#202C40" stroke-width="8"/>
+  <ellipse cx="512" cy="512" rx="194" ry="66" stroke="#FFD07F" stroke-width="16"/>
+  <circle cx="512" cy="512" r="54" fill="#FFF6D7"/>
+  <circle cx="512" cy="512" r="88" stroke="#A9F0FF" stroke-width="8" stroke-opacity="0.55"/>
+</svg>`;
+
+const CUR  = document.getElementById('cur');
+const RING = document.getElementById('ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{ mx=e.clientX; my=e.clientY; });
+(function animCursor(){ requestAnimationFrame(animCursor); rx+=(mx-rx)*.1; ry+=(my-ry)*.1; CUR.style.left=mx+'px'; CUR.style.top=my+'px'; RING.style.left=rx+'px'; RING.style.top=ry+'px'; })();
+function hi(){ RING.classList.add('h'); }
+function ho(){ RING.classList.remove('h'); }
+
+const STATES = {
+  idle:   { r:58,  g:68,  b:92,  hex:'#3a445c', label:'◉ SYSTÈME EN LIGNE · REPOS',      name:'IRIS',   density:1.0, speed:1.0,  spread:1.0,  orbitAlpha:0.08, glow:0.16, alphaBoost:0.98 },
+  active: { r:73,  g:122, b:255, hex:'#497aff', label:'◈ TRAITEMENT · COMMANDE',         name:'ACTIF',  density:1.28, speed:1.5, spread:1.08, orbitAlpha:0.16, glow:0.24, alphaBoost:1.18 },
+  scan:   { r:9,   g:172, b:120, hex:'#09ac78', label:'⬡ SCAN · ANALYSE',                name:'SCAN',   density:1.52, speed:2.0, spread:1.12, orbitAlpha:0.16, glow:0.24, alphaBoost:1.18 },
+  alert:  { r:230, g:83,  b:92,  hex:'#e6535c', label:'⚠ ALERTE · ANOMALIE',             name:'ALERTE', density:2.25, speed:3.2, spread:1.28, orbitAlpha:0.22, glow:0.32, alphaBoost:1.32 },
+  voice:  { r:174, g:96,  b:255, hex:'#ae60ff', label:'◎ ÉCOUTE · VOCAL ACTIF',          name:'ÉCOUTE', density:1.38, speed:1.28,spread:1.16, orbitAlpha:0.18, glow:0.28, alphaBoost:1.24 },
+  train:  { r:255, g:166, b:51,  hex:'#ffa633', label:'↺ AUTO-TRAIN · CYCLE ACTIF',      name:'TRAIN',  density:1.9, speed:2.28,spread:1.1,  orbitAlpha:0.18, glow:0.28, alphaBoost:1.24 },
+  auto:   { r:36,  g:191, b:194, hex:'#24bfc2', label:'▸ MODE AUTONOME · RUNNING',       name:'AUTO',   density:1.66, speed:1.72,spread:1.14, orbitAlpha:0.17, glow:0.26, alphaBoost:1.22 },
+  sleep:  { r:124, g:134, b:160, hex:'#7c86a0', label:'· VEILLE · STANDBY',              name:'VEILLE', density:0.45, speed:0.38,spread:0.9,  orbitAlpha:0.05, glow:0.08, alphaBoost:0.84 }
+};
+
+let curState = 'idle';
+let stObj = STATES.idle;
+const appState = {
+  voiceActive: false,
+  listening: false,
+  panelOpen: false,
+  chatHistory: [],
+  data: null,
+  summary: {},
+  voice: null,
+  bridge: null,
+  bootReleased: false,
+  voiceOutputEnabled: (() => {
+    try {
+      const saved = localStorage.getItem('iris.voiceOutputEnabled');
+      return saved == null ? true : saved === '1';
+    } catch {
+      return true;
+    }
+  })()
+};
+
+function injectIrisLogos() {
+  document.querySelectorAll('[data-iris-logo]').forEach((node) => { node.innerHTML = IRIS_LOGO_SVG; });
+}
+
+function setSt(s) {
+  if (!STATES[s]) return;
+  curState = s; stObj = STATES[s];
+  orbTarget.r = stObj.r; orbTarget.g = stObj.g; orbTarget.b = stObj.b;
+  document.getElementById('slabel').textContent = stObj.label;
+  document.getElementById('gname').textContent  = stObj.name;
+  document.querySelectorAll('.dot,.mr.i,.sv,.st,.bfl,#wm,#pt,#ipfx').forEach(el=>{
+    el.style.color = stObj.hex;
+    el.style.background = (el.classList.contains('bfl') || el.classList.contains('dot')) ? stObj.hex : '';
+  });
+}
+
+const driftSeq = ['idle','train','auto','idle','scan','idle','sleep','idle','active','idle','idle'];
+let driftI = 0;
+setInterval(()=>{
+  if (!appState.panelOpen && !appState.voiceActive && document.activeElement !== document.getElementById('inp')) {
+    driftI = (driftI+1) % driftSeq.length;
+    setSt(driftSeq[driftI]);
+  }
+},9000);
+
+let OW,OH,CX,CY,OR;
+const orbCanvas = document.getElementById('orb');
+const oc = orbCanvas.getContext('2d');
+const orbColor  = { r:17, g:17, b:17 };
+const orbTarget = { r:17, g:17, b:17 };
+let mousePos = { x:-9999, y:-9999 };
+document.addEventListener('mousemove', e=>{ mousePos={x:e.clientX,y:e.clientY}; });
+
+function orbResize() {
+  const rect = document.getElementById('main').getBoundingClientRect();
+  OW = rect.width||window.innerWidth;
+  OH = rect.height||window.innerHeight;
+  orbCanvas.width  = OW;
+  orbCanvas.height = OH;
+  CX = OW/2; CY = OH/2;
+  OR = Math.min(OW,OH) * 0.29;
+}
+
+class Dot {
+  constructor() { this.init(true); }
+  init(first) {
+    this.theta = Math.random()*Math.PI*2;
+    this.phi   = Math.acos(2*Math.random()-1);
+    const u    = Math.pow(Math.random(), 0.35);
+    this.r0    = OR * (0.52 + u*0.54);
+    this.r     = this.r0;
+    this.sz0   = Math.random()*1.7+0.2;
+    this.sz    = this.sz0;
+    this.dT    = (Math.random()-.5)*0.0085;
+    this.dP    = (Math.random()-.5)*0.006;
+    this.a0    = Math.random()*0.72+0.14;
+    this.a     = first ? this.a0 : 0;
+    this.tw    = Math.random()*0.045+0.008;
+    this.twPh  = Math.random()*Math.PI*2;
+    this.life  = 180+Math.random()*280;
+    this.age   = first ? Math.random()*this.life : 0;
+  }
+  pos3D() {
+    return {
+      x: this.r * Math.sin(this.phi)*Math.cos(this.theta),
+      y: this.r * Math.sin(this.phi)*Math.sin(this.theta),
+      z: this.r * Math.cos(this.phi)
+    };
+  }
+  screen(rY) {
+    const {x,y,z} = this.pos3D();
+    const c=Math.cos(rY),s=Math.sin(rY);
+    const rx=x*c-z*s, rz=x*s+z*c, ry=y;
+    const fov=600;
+    const sc=fov/(fov+rz+OR*0.5);
+    return { sx:CX+rx*sc, sy:CY+ry*sc, rz, sc };
+  }
+  step(rY, t) {
+    this.theta += this.dT * stObj.speed;
+    this.phi   += this.dP * stObj.speed;
+    this.age++;
+    if (this.age > this.life) { this.init(false); return; }
+    if (this.age < 25) { this.a = this.a0*(this.age/25); }
+    this.a = this.a0*(0.72+0.28*Math.sin(t*this.tw+this.twPh));
+    this.r = this.r0 * stObj.spread;
+    const {sx,sy} = this.screen(rY);
+    const dx=sx-mousePos.x, dy=sy-mousePos.y;
+    const d=Math.sqrt(dx*dx+dy*dy);
+    const zone=85;
+    if (d < zone) {
+      const f=(1-d/zone);
+      this.r  = this.r0*stObj.spread + f*32;
+      this.sz = this.sz0*(1+f*0.7);
+      this.a  = Math.min(1, this.a0*(1+f*0.6));
+    } else {
+      this.sz = this.sz0;
+    }
+  }
+  draw(rY) {
+    const {sx,sy,rz,sc} = this.screen(rY);
+    const depth = Math.max(0,(rz+OR)/(2*OR));
+    const alpha = this.a*(0.42+depth*0.86);
+    const {r,g,b} = orbColor;
+    oc.beginPath();
+    oc.arc(sx, sy, Math.max(0.15, this.sz*sc), 0, Math.PI*2);
+    oc.fillStyle = `rgba(${r|0},${g|0},${b|0},${alpha.toFixed(3)})`;
+    oc.fill();
+  }
+}
+
+let dots = [];
+let rotY = 0;
+let animT = 0;
+let orbReady = false;
+
+function initOrb() {
+  orbResize();
+  dots = [];
+  for (let i=0; i<760; i++) dots.push(new Dot());
+  orbReady = true;
+}
+
+function animOrb() {
+  requestAnimationFrame(animOrb);
+  if (!orbReady) return;
+
+  orbColor.r += (orbTarget.r - orbColor.r)*0.035;
+  orbColor.g += (orbTarget.g - orbColor.g)*0.035;
+  orbColor.b += (orbTarget.b - orbColor.b)*0.035;
+
+  oc.clearRect(0,0,OW,OH);
+  animT++;
+
+  rotY += 0.0032 + (mousePos.x/window.innerWidth-0.5)*0.004;
+  const rY = rotY + (mousePos.x/window.innerWidth-0.5)*0.32;
+
+  oc.save();
+  oc.strokeStyle = `rgba(${orbColor.r|0},${orbColor.g|0},${orbColor.b|0},0.06)`;
+  oc.lineWidth = 1;
+  for (let i = 0; i < 3; i++) {
+    oc.beginPath();
+    oc.ellipse(CX, CY, OR * (0.72 + i * 0.16), OR * (0.44 + i * 0.11), (animT * 0.0008) + i * 0.7, 0, Math.PI * 2);
+    oc.stroke();
+  }
+  oc.restore();
+
+  const sorted = dots.map(d=>{
+    const {x,z}=d.pos3D();
+    const c=Math.cos(rY),s=Math.sin(rY);
+    return {d, rz: x*s+z*c};
+  }).sort((a,b)=>a.rz-b.rz);
+
+  sorted.forEach(({d})=>{ d.step(rY,animT); d.draw(rY); });
+
+  const {r,g,b}=orbColor;
+  const grd=oc.createRadialGradient(CX,CY,0,CX,CY,OR*0.2);
+  grd.addColorStop(0,`rgba(${r|0},${g|0},${b|0},0.12)`);
+  grd.addColorStop(1,`rgba(${r|0},${g|0},${b|0},0)`);
+  oc.fillStyle=grd;
+  oc.beginPath(); oc.arc(CX,CY,OR*0.2,0,Math.PI*2); oc.fill();
+}
+
+const excC = document.getElementById('exc');
+const ec = excC.getContext('2d');
+let exP = [];
+let exRunning = false;
+
+function resizeExc() { excC.width=window.innerWidth; excC.height=window.innerHeight; }
+
+function explode(px,py) {
+  const {r,g,b} = orbColor;
+  const n = 180;
+  for (let i=0;i<n;i++) {
+    const a=Math.random()*Math.PI*2, sp=Math.random()*13+2;
+    exP.push({ x:px, y:py, vx:Math.cos(a)*sp, vy:Math.sin(a)*sp,
+      r:r|0, g:g|0, b:b|0,
+      sz:Math.random()*2+0.4, al:Math.random()*.75+.2,
+      life:45+Math.random()*45, age:0, grav:.11+Math.random()*.11 });
+  }
+  if (!exRunning) animEx();
+}
+
+function animEx() {
+  exP = exP.filter(p=>p.age<p.life);
+  if (!exP.length) { exRunning=false; ec.clearRect(0,0,excC.width,excC.height); return; }
+  exRunning=true; requestAnimationFrame(animEx);
+  ec.clearRect(0,0,excC.width,excC.height);
+  exP.forEach(p=>{
+    p.age++; p.x+=p.vx; p.y+=p.vy; p.vy+=p.grav; p.vx*=.965; p.vy*=.97; p.al*=.966;
+    ec.beginPath(); ec.arc(p.x,p.y,p.sz,0,Math.PI*2);
+    ec.fillStyle=`rgba(${p.r},${p.g},${p.b},${p.al.toFixed(3)})`; ec.fill();
+  });
+}
+
+function openPanel() {
+  appState.panelOpen=true;
+  document.getElementById('panel').classList.add('on');
+  explode(window.innerWidth/2,window.innerHeight/2);
+  setSt('active');
+}
+function closePanel() {
+  appState.panelOpen=false;
+  document.getElementById('panel').classList.remove('on');
+  explode(window.innerWidth/2,window.innerHeight/2);
+  setSt('idle');
+}
+function swPage(id,el) {
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
+  document.getElementById('pg-'+id).classList.add('on');
+  el.classList.add('on');
+  explode(window.innerWidth/2,window.innerHeight/2);
+}
+
+const msgsEl = document.getElementById('msgs');
+
+function addMsg(role,text,isIris) {
+  const d=document.createElement('div');
+  d.className='msg';
+  d.innerHTML=`<div class="mr${isIris?' i':''}">${escapeHtml(role)}</div><div class="mb">${escapeHtml(text)}</div>`;
+  msgsEl.appendChild(d);
+  while(msgsEl.children.length>2) msgsEl.removeChild(msgsEl.firstChild);
+}
+
+function irisTyping() {
+  const d=document.createElement('div');
+  d.className='msg';
+  d.innerHTML=`<div class="mr i">IRIS</div><div class="mb"><span class="ty"><b></b><b></b><b></b></span></div>`;
+  msgsEl.appendChild(d);
+  while(msgsEl.children.length>2) msgsEl.removeChild(msgsEl.firstChild);
+  return d;
+}
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"]/g, (match) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[match]));
+}
+
+async function fetchJson(url, options = {}, timeout = 30000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeout);
+  try {
+    const response = await fetch(url, { ...options, signal: controller.signal });
+    const text = await response.text();
+    let payload = {};
+    try { payload = text ? JSON.parse(text) : {}; } catch { payload = { raw:text }; }
+    if (!response.ok) {
+      throw new Error(payload.detail || payload.error || payload.raw || `HTTP ${response.status}`);
+    }
+    return payload;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function summary() {
+  const root = appState.data || {};
+  const s = root.summary || root;
+  return {
+    ...root,
+    ...s,
+    services_ok: s.services_ok ?? root.services_ok ?? 0,
+    services_total: s.services_total ?? root.services_total ?? 0,
+    agents_working: s.agents_working ?? root.agents_working ?? [],
+    watch_sites: s.watch_sites ?? root.watch_sites ?? root.watch?.watch_sites_count ?? 0,
+    selected_project: s.selected_project ?? root.selected_project ?? root.launch_briefing?.recommended_project ?? 'IRIS'
+  };
+}
+
+function updateStateVisuals() {
+  const s = summary();
+  const training = appState.data?.training || s.training || {};
+  const voice = appState.voice || {};
+  const bridge = appState.bridge || {};
+
+  document.getElementById('chip-shell').textContent = bridge.mode?.startsWith('native') ? 'SHELL NATIF' : 'SHELL HTTP';
+  document.getElementById('chip-train').textContent = `AUTO-TRAIN ${String(training.status || 'idle').toUpperCase()}`;
+  document.getElementById('chip-mesh').textContent = `MESH ${s.services_ok || 0}/${s.services_total || 0}`;
+  document.getElementById('chip-agents').textContent = `${(s.agents_working || []).length} AGENTS`;
+
+  document.getElementById('sv-bridge').innerHTML = `${s.services_ok || 0}<span class="su">/${s.services_total || 0}</span>`;
+  document.getElementById('sv-agents').textContent = `${(s.agents_working || []).length}`;
+  document.getElementById('watchSites').textContent = `${s.watch_sites || 0}`;
+  document.getElementById('lastAgent').textContent = (s.selected_project || (s.agents_working || [])[0] || 'IRIS').toUpperCase();
+
+  const trainPct = training.status === 'running' ? 86 : training.status === 'ready' ? 72 : training.status === 'idle' ? 38 : 52;
+  document.getElementById('tbar').style.width = `${trainPct}%`;
+  document.getElementById('trainPct').innerHTML = `${trainPct}<span class="su">%</span>`;
+
+  if (appState.listening) setSt('voice');
+  else if (training.status === 'running') setSt('train');
+  else if ((s.next_actions || []).some((item) => String(item).toLowerCase().includes('scan'))) setSt('scan');
+  else setSt('idle');
+
+  const slabel = appState.listening
+    ? '◎ ÉCOUTE · VOCAL ACTIF'
+    : voice.detail
+      ? `${voice.detail}`.toUpperCase()
+      : '◉ SYSTÈME EN LIGNE · REPOS';
+  document.getElementById('slabel').textContent = slabel;
+}
+
+function renderAgentsPanel() {
+  const container = document.getElementById('pg-agents');
+  const agents = appState.data?.agents || [];
+  container.innerHTML = agents.slice(0, 9).map((agent) => `
+    <div class="card" onmouseenter="hi()" onmouseleave="ho()" onclick="cfp('explique ce que fait ${escapeAttr(agent.name || 'cet agent')} maintenant')">
+      <div class="ci">⬡</div>
+      <div class="cl">${escapeHtml((agent.name || 'agent').split(' // ')[0])}</div>
+      <div class="cd">${escapeHtml(agent.task_current || agent.why_it_matters || agent.last_line || 'Aucune activité remontée.')}</div>
+    </div>
+  `).join('') || `
+    <div class="card"><div class="ci">◉</div><div class="cl">AUCUN AGENT</div><div class="cd">Le mesh agents ne remonte rien pour le moment.</div></div>
+  `;
+}
+
+function escapeAttr(value) {
+  return String(value ?? '').replace(/"/g, '&quot;');
+}
+
+function syncBoot(progress, phase, line1, line2) {
+  document.getElementById('bootFill').style.width = `${progress}%`;
+  document.getElementById('bootPhase').textContent = phase;
+  document.getElementById('bootPct').textContent = `${progress}%`;
+  document.getElementById('bootLine1').textContent = line1;
+  document.getElementById('bootLine2').textContent = line2;
+}
+
+function releaseBoot() {
+  if (appState.bootReleased) return;
+  appState.bootReleased = true;
+  document.getElementById('boot').classList.add('hidden');
+}
+
+async function loadLiveState() {
+  syncBoot(24, 'SYNC', '[bridge] lecture de l’état local', '[mesh] synchronisation des agents');
+  const [state, voice, bridge] = await Promise.all([
+    fetchJson('/api/state', {}, 60000),
+    fetchJson('/api/voice/status', {}, 30000),
+    fetchJson('/api/bridge-state', {}, 30000)
+  ]);
+  appState.data = state;
+  appState.voice = voice;
+  appState.bridge = bridge;
+  updateStateVisuals();
+  renderAgentsPanel();
+  syncBoot(100, 'ONLINE', '[iris] système en ligne', `[voice] ${voice.detail || 'voix prête'}`);
+  releaseBoot();
+}
+
+async function refreshLive() {
+  try {
+    await loadLiveState();
+  } catch (error) {
+    addMsg('IRIS', `Synchronisation impossible: ${error.message}`, true);
+    setSt('alert');
+    releaseBoot();
+  }
+}
+
+function postNativeBridgeCommand(command) {
+  if (!nativeBridgeAvailable) return false;
+  try {
+    window.webkit.messageHandlers.irisNative.postMessage({ command });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+window.__irisNativeVoiceState = function(payload) {
+  appState.voice = { ...(appState.voice || {}), ...(payload || {}) };
+  appState.listening = Boolean(payload?.listening);
+  appState.voiceActive = appState.listening;
+  document.getElementById('vbtn').classList.toggle('on', appState.listening);
+  updateStateVisuals();
+};
+
+window.__irisNativeVoiceDidError = function(message) {
+  appState.listening = false;
+  appState.voiceActive = false;
+  document.getElementById('vbtn').classList.remove('on');
+  addMsg('IRIS', message, true);
+  setSt('alert');
+};
+
+window.__irisNativeVoiceDidTranscribe = function(text) {
+  appState.listening = false;
+  appState.voiceActive = false;
+  document.getElementById('vbtn').classList.remove('on');
+  const inp = document.getElementById('inp');
+  inp.value = text || '';
+  send();
+};
+
+async function postChat(message) {
+  appState.chatHistory.push({ role:'user', content: message });
+  const typing = irisTyping();
+  try {
+    const payload = await fetchJson('/api/chat', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        message,
+        history: appState.chatHistory.slice(-8),
+        scene: 'aperture-core'
+      })
+    }, 90000);
+    const reply = payload.reply || 'Je suis là.';
+    if (typing.parentNode) typing.querySelector('.mb').textContent = reply;
+    appState.chatHistory.push({ role:'assistant', content: reply });
+    if (payload.summary) {
+      appState.data = { ...(appState.data || {}), summary: payload.summary };
+      updateStateVisuals();
+    }
+  } catch (error) {
+    if (typing.parentNode) typing.querySelector('.mb').textContent = `Le copilote n’a pas pu répondre: ${error.message}`;
+    setSt('alert');
+  }
+}
+
+function send() {
+  const inp=document.getElementById('inp');
+  const t=inp.value.trim();
+  if(!t) return;
+  addMsg('VOUS',t,false);
+  inp.value='';
+  const lo=t.toLowerCase();
+  if(lo.includes('scan'))setSt('scan');
+  else if(lo.includes('alerte')||lo.includes('erreur'))setSt('alert');
+  else if(lo.includes('train'))setSt('train');
+  else if(lo.includes('auto'))setSt('auto');
+  else setSt('active');
+  postChat(t);
+}
+
+document.getElementById('inp').addEventListener('keydown',e=>{ if(e.key==='Enter')send(); });
+document.getElementById('inp').addEventListener('focus',()=>setSt('active'));
+document.getElementById('inp').addEventListener('blur',()=>{ if(curState==='active')setSt('idle'); });
+
+async function toggleVoice(){
+  if (nativeBridgeAvailable && hostedByNativeApp) {
+    appState.voiceActive = !appState.voiceActive;
+    document.getElementById('vbtn').classList.toggle('on', appState.voiceActive);
+    postNativeBridgeCommand('toggleMic');
+    setSt(appState.voiceActive ? 'voice' : 'idle');
+    return;
+  }
+  appState.voiceActive=!appState.voiceActive;
+  document.getElementById('vbtn').classList.toggle('on',appState.voiceActive);
+  if(appState.voiceActive){ setSt('voice'); addMsg('IRIS','Canal vocal ouvert.',true); }
+  else{ setSt('idle'); addMsg('IRIS','Canal vocal fermé.',true); }
+}
+
+async function runAction(action, successText = 'Action lancée.') {
+  closePanel();
+  try {
+    await fetchJson(`/api/action/${encodeURIComponent(action)}`, { method:'POST' }, 60000);
+    addMsg('IRIS', successText, true);
+    if (action === 'watch_now') setSt('scan');
+    if (action === 'self_train_cycle') setSt('train');
+    setTimeout(refreshLive, 1200);
+  } catch (error) {
+    addMsg('IRIS', `Action impossible: ${error.message}`, true);
+    setSt('alert');
+  }
+}
+
+function cfp(cmd) {
+  closePanel();
+  document.getElementById('inp').value=cmd;
+  setTimeout(()=>send(),220);
+}
+
+let secs=0;
+setInterval(()=>{
+  secs++;
+  const m=String(Math.floor(secs/60)).padStart(2,'0'),s=String(secs%60).padStart(2,'0');
+  document.getElementById('up').textContent=`${m}:${s}`;
+},1000);
+
+window.addEventListener('load', ()=>{
+  resizeExc();
+  window.addEventListener('resize',()=>{ orbResize(); resizeExc(); });
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+      initOrb();
+      animOrb();
+      addMsg('IRIS','Système en ligne. Bienvenue.', true);
+      refreshLive();
+      setInterval(refreshLive, 20000);
+      if (nativeBridgeAvailable && hostedByNativeApp) {
+        postNativeBridgeCommand('voiceStatus');
+      }
+    });
+  });
+});
+</script>
+</body>
+</html>

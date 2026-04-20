@@ -1,0 +1,287 @@
+:root{
+  --iris38-line: rgba(137,176,255,.16);
+  --iris38-bg: rgba(8,15,33,.92);
+  --iris38-text: #eef5ff;
+}
+
+#iris-v36-layer,
+#iris-v37-layer{
+  opacity:0 !important;
+  pointer-events:none !important;
+  visibility:hidden !important;
+}
+
+.iris-v37-chat-dock{
+  width: 198px !important;
+  min-width: 198px !important;
+  max-width: 198px !important;
+  min-height: 68px !important;
+  right: 16px !important;
+  bottom: 16px !important;
+  border-radius: 20px !important;
+  overflow: hidden !important;
+  background: linear-gradient(180deg, rgba(8,15,33,.9), rgba(7,13,27,.95)) !important;
+  border: 1px solid var(--iris38-line) !important;
+  box-shadow: 0 16px 34px rgba(0,0,0,.34) !important;
+}
+.iris-v37-chat-dock.iris-v37-open{
+  width: min(420px, calc(100vw - 330px)) !important;
+  max-width: 420px !important;
+}
+
+#iris-v38-layer{
+  position: fixed;
+  inset: 0;
+  z-index: 9995;
+  pointer-events: none;
+}
+
+#iris-v38-pet{
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 76px;
+  height: 88px;
+  transform-origin: center bottom;
+  filter: drop-shadow(0 10px 18px rgba(0,0,0,.24));
+  will-change: transform;
+}
+
+#iris-v38-pet .shadow{
+  position:absolute;
+  left:16px;
+  bottom:2px;
+  width:42px;
+  height:10px;
+  border-radius:999px;
+  background: radial-gradient(circle at center, rgba(0,0,0,.35), transparent 72%);
+  animation: iris38-shadow 2.6s ease-in-out infinite;
+}
+
+#iris-v38-pet .tail{
+  position:absolute;
+  right:8px;
+  top:42px;
+  width:20px;
+  height:30px;
+  border-radius:18px 18px 18px 4px;
+  background: linear-gradient(180deg,#9fd6ff,#7ea9ff 45%, #5c7ee0 100%);
+  transform-origin: top center;
+  z-index:0;
+}
+
+#iris-v38-pet .body{
+  position:absolute;
+  left:22px;
+  top:38px;
+  width:34px;
+  height:34px;
+  border-radius: 18px 18px 20px 20px;
+  background: linear-gradient(180deg,#dbeaff 0%, #a9caff 42%, #7e9eff 72%, #5b73d7 100%);
+  box-shadow: inset 0 2px 0 rgba(255,255,255,.5);
+  z-index:2;
+}
+
+#iris-v38-pet .belly{
+  position:absolute;
+  left:28px;
+  top:48px;
+  width:22px;
+  height:14px;
+  border-radius:999px;
+  background: linear-gradient(180deg,#eef8ff,#c5deff);
+  opacity:.78;
+  z-index:3;
+}
+
+#iris-v38-pet .head{
+  position:absolute;
+  left:15px;
+  top:10px;
+  width:46px;
+  height:38px;
+  border-radius: 18px;
+  background: linear-gradient(180deg,#f4fbff 0%, #d4e8ff 32%, #9fc1ff 67%, #7994ef 100%);
+  box-shadow: inset 0 2px 0 rgba(255,255,255,.6);
+  z-index:4;
+}
+
+#iris-v38-pet .ear{
+  position:absolute;
+  top:4px;
+  width:14px;
+  height:14px;
+  background: linear-gradient(180deg,#dff1ff,#9ec8ff);
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  z-index:3;
+}
+#iris-v38-pet .ear.l{ left:18px; transform: rotate(-12deg); }
+#iris-v38-pet .ear.r{ left:44px; transform: rotate(12deg); }
+
+#iris-v38-pet .visor{
+  position:absolute;
+  left:24px;
+  top:24px;
+  width:28px;
+  height:13px;
+  border-radius: 999px;
+  background: linear-gradient(180deg,#0d1632,#172347);
+  z-index:5;
+}
+
+#iris-v38-pet .eye{
+  position:absolute;
+  top:28px;
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:#fff;
+  box-shadow: 0 0 10px rgba(255,255,255,.75);
+  z-index:6;
+}
+#iris-v38-pet .eye.l{ left:32px; }
+#iris-v38-pet .eye.r{ left:40px; }
+
+#iris-v38-pet .nose{
+  position:absolute;
+  left:35px;
+  top:34px;
+  width:6px;
+  height:4px;
+  border-radius:999px;
+  background:#ffd7eb;
+  z-index:6;
+}
+#iris-v38-pet .mouth{
+  position:absolute;
+  left:33px;
+  top:37px;
+  width:10px;
+  height:5px;
+  border-bottom: 2px solid rgba(255,255,255,.95);
+  border-radius: 0 0 10px 10px;
+  z-index:6;
+}
+
+#iris-v38-pet .paw{
+  position:absolute;
+  width:10px;
+  height:18px;
+  border-radius:999px;
+  background: linear-gradient(180deg,#a4cbff,#6f8fea);
+  transform-origin: top center;
+  z-index:1;
+}
+#iris-v38-pet .paw.fl{ left:24px; top:65px; }
+#iris-v38-pet .paw.fr{ left:42px; top:65px; }
+#iris-v38-pet .paw.bl{ left:10px; top:44px; height:20px; }
+#iris-v38-pet .paw.br{ right:10px; top:44px; height:20px; }
+
+#iris-v38-pet .paw:after{
+  content:"";
+  position:absolute;
+  bottom:-2px;
+  left:-2px;
+  width:12px;
+  height:10px;
+  border-radius:999px;
+  background: linear-gradient(180deg,#daf0ff,#a8ccff);
+}
+
+#iris-v38-pet .spark{
+  position:absolute;
+  left:34px;
+  top:-6px;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background: radial-gradient(circle at 35% 35%, #fff, #b7ecff 45%, #6c8fff 100%);
+  box-shadow:0 0 12px rgba(134,225,255,.68);
+  z-index:7;
+}
+
+#iris-v38-pet .antenna{
+  position:absolute;
+  left:37px;
+  top:-1px;
+  width:3px;
+  height:12px;
+  border-radius:999px;
+  background: linear-gradient(180deg,#a8e7ff,#7aa0ff);
+  z-index:6;
+}
+
+#iris-v38-pet.idle .tail{ animation: iris38-tail 1.4s ease-in-out infinite; }
+#iris-v38-pet.walk .tail{ animation: iris38-tail-fast .55s ease-in-out infinite; }
+#iris-v38-pet.walk .paw.fl{ animation: iris38-step-a .34s linear infinite; }
+#iris-v38-pet.walk .paw.fr{ animation: iris38-step-b .34s linear infinite; }
+#iris-v38-pet.walk .paw.bl{ animation: iris38-step-b .34s linear infinite; }
+#iris-v38-pet.walk .paw.br{ animation: iris38-step-a .34s linear infinite; }
+#iris-v38-pet.peek .paw.br{ animation: iris38-wave .7s ease-in-out infinite; }
+#iris-v38-pet.sleep .eye{
+  height:2px;
+  top:31px;
+  border-radius:999px;
+  box-shadow:none;
+}
+#iris-v38-pet.sleep .mouth{
+  top:38px;
+  width:8px;
+  height:3px;
+  border:none;
+  background:rgba(255,255,255,.92);
+  border-radius:999px;
+}
+#iris-v38-pet.sleep .tail{ animation: iris38-tail 2.2s ease-in-out infinite; }
+#iris-v38-pet.blink .eye{ animation: iris38-blink .18s linear 1; }
+
+#iris-v38-bubble{
+  position: fixed;
+  left: 0;
+  top: 0;
+  max-width: 150px;
+  padding: 8px 11px;
+  border-radius: 14px;
+  border: 1px solid rgba(137,176,255,.16);
+  background: rgba(9,17,37,.95);
+  color: #eef5ff;
+  font: 600 12px/1.2 -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity .14s ease, transform .14s ease;
+  box-shadow: 0 10px 24px rgba(0,0,0,.28);
+  pointer-events:none;
+}
+#iris-v38-bubble.show{
+  opacity:1;
+  transform: translateY(0);
+}
+
+@keyframes iris38-tail{
+  0%,100%{ transform: rotate(-10deg); }
+  50%{ transform: rotate(12deg); }
+}
+@keyframes iris38-tail-fast{
+  0%,100%{ transform: rotate(-18deg); }
+  50%{ transform: rotate(16deg); }
+}
+@keyframes iris38-step-a{
+  0%,100%{ transform: rotate(12deg); }
+  50%{ transform: rotate(-14deg); }
+}
+@keyframes iris38-step-b{
+  0%,100%{ transform: rotate(-14deg); }
+  50%{ transform: rotate(12deg); }
+}
+@keyframes iris38-wave{
+  0%,100%{ transform: rotate(-10deg); }
+  50%{ transform: rotate(-38deg); }
+}
+@keyframes iris38-shadow{
+  0%,100%{ transform: scaleX(1); opacity:.42; }
+  50%{ transform: scaleX(.88); opacity:.30; }
+}
+@keyframes iris38-blink{
+  0%,100%{ transform: scaleY(1); }
+  50%{ transform: scaleY(.08); }
+}

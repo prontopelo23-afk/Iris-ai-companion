@@ -1,0 +1,9 @@
+{
+  "status": "idle",
+  "detail": "Voix locale prête",
+  "pid": null,
+  "last_text": "Salut. Je suis là. Tu peux me parler, me demander un statut, changer de mode, ou lancer une veille.",
+  "updated": "2026-04-20T02:15:33",
+  "tts_available": true,
+  "native_voice": true
+}

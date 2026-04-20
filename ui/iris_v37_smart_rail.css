@@ -1,0 +1,313 @@
+:root{
+  --iris37-surface: rgba(8,15,33,.9);
+  --iris37-line: rgba(132,170,255,.18);
+  --iris37-glow: rgba(109,143,255,.22);
+  --iris37-text: #eef5ff;
+}
+
+.iris-v37-chat-dock{
+  position: fixed !important;
+  right: 18px !important;
+  bottom: 18px !important;
+  width: 230px !important;
+  min-width: 230px !important;
+  max-width: 230px !important;
+  min-height: 74px !important;
+  z-index: 9997 !important;
+  border-radius: 22px !important;
+  overflow: hidden !important;
+  background: linear-gradient(180deg, rgba(9,17,37,.88), rgba(8,15,31,.9)) !important;
+  border: 1px solid var(--iris37-line) !important;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 18px 40px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.03) !important;
+}
+.iris-v37-chat-dock.iris-v37-open{
+  width: min(460px, calc(100vw - 340px)) !important;
+  max-width: 460px !important;
+}
+.iris-v37-chat-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:12px 14px;
+  border-bottom:1px solid rgba(132,170,255,.08);
+}
+.iris-v37-chat-head strong{
+  font-size:18px;
+  line-height:1.05;
+  color:var(--iris37-text);
+}
+.iris-v37-chat-right{
+  display:flex;
+  gap:8px;
+}
+.iris-v37-mini-btn{
+  width:38px;
+  height:32px;
+  border-radius:12px;
+  border:1px solid rgba(132,170,255,.14);
+  background:rgba(19,30,63,.74);
+  color:#eff5ff;
+  cursor:pointer;
+}
+.iris-v37-chat-dock:not(.iris-v37-open) > *:not(.iris-v37-chat-head){
+  display:none !important;
+}
+
+#iris-v37-layer{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:9996;
+}
+#iris-v37-pet{
+  position:fixed;
+  left:0;
+  top:0;
+  width:92px;
+  height:102px;
+  transform-origin:center bottom;
+  filter:drop-shadow(0 10px 18px rgba(0,0,0,.26));
+  opacity:.97;
+}
+#iris-v37-pet .w{
+  position:absolute;
+  inset:0;
+  animation:iris37-breathe 2.6s ease-in-out infinite;
+}
+#iris-v37-pet .shadow{
+  position:absolute;
+  left:19px;
+  bottom:4px;
+  width:54px;
+  height:10px;
+  border-radius:999px;
+  background:radial-gradient(circle at center, rgba(0,0,0,.38), transparent 70%);
+  animation:iris37-shadow 2.6s ease-in-out infinite;
+}
+#iris-v37-pet .tail{
+  position:absolute;
+  left:63px;
+  top:62px;
+  width:16px;
+  height:28px;
+  border-radius:14px 14px 14px 0;
+  background:linear-gradient(180deg,#8fc9ff,#5f88f1);
+  transform-origin:top center;
+}
+#iris-v37-pet .body{
+  position:absolute;
+  left:26px;
+  top:44px;
+  width:38px;
+  height:42px;
+  border-radius:16px 16px 18px 18px;
+  background:linear-gradient(180deg,#bcd9ff 0%, #7ca8ff 52%, #5579df 100%);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.52);
+}
+#iris-v37-pet .belly{
+  position:absolute;
+  left:34px;
+  top:55px;
+  width:22px;
+  height:15px;
+  border-radius:999px;
+  background:linear-gradient(180deg,#e7f4ff,#b2d2ff);
+  opacity:.78;
+}
+#iris-v37-pet .head{
+  position:absolute;
+  left:18px;
+  top:12px;
+  width:54px;
+  height:44px;
+  border-radius:18px;
+  background:linear-gradient(180deg,#eff8ff 0%, #b9d7ff 48%, #7ea9ff 100%);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.68);
+}
+#iris-v37-pet .ear{
+  position:absolute;
+  top:8px;
+  width:14px;
+  height:14px;
+  background:linear-gradient(180deg,#cfe7ff,#8bb8ff);
+  clip-path:polygon(50% 0, 100% 100%, 0 100%);
+}
+#iris-v37-pet .ear.l{ left:22px; transform:rotate(-12deg); }
+#iris-v37-pet .ear.r{ left:54px; transform:rotate(12deg); }
+#iris-v37-pet .visor{
+  position:absolute;
+  left:28px;
+  top:27px;
+  width:34px;
+  height:15px;
+  border-radius:10px;
+  background:linear-gradient(180deg,#0e1737,#17244b);
+}
+#iris-v37-pet .eye{
+  position:absolute;
+  top:31px;
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:#fff;
+  box-shadow:0 0 10px rgba(255,255,255,.65);
+}
+#iris-v37-pet .eye.l{ left:37px; }
+#iris-v37-pet .eye.r{ left:49px; }
+#iris-v37-pet .mouth{
+  position:absolute;
+  left:41px;
+  top:38px;
+  width:8px;
+  height:4px;
+  border-bottom:2px solid rgba(255,255,255,.92);
+  border-radius:0 0 8px 8px;
+}
+#iris-v37-pet .antenna{
+  position:absolute;
+  left:44px;
+  top:-2px;
+  width:3px;
+  height:14px;
+  border-radius:999px;
+  background:linear-gradient(180deg,#9be1ff,#6f8dff);
+}
+#iris-v37-pet .antenna:after{
+  content:"";
+  position:absolute;
+  left:-3px;
+  top:-6px;
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:radial-gradient(circle at 35% 35%, #f0ffff, #9be2ff 60%, #6c89ff);
+  box-shadow:0 0 12px rgba(121,214,255,.6);
+}
+#iris-v37-pet .arm{
+  position:absolute;
+  top:52px;
+  width:10px;
+  height:24px;
+  border-radius:999px;
+  background:linear-gradient(180deg,#99c4ff,#668df1);
+  transform-origin:top center;
+}
+#iris-v37-pet .arm.l{ left:18px; transform:rotate(14deg); }
+#iris-v37-pet .arm.r{ left:64px; transform:rotate(-14deg); }
+#iris-v37-pet .hand{
+  position:absolute;
+  bottom:-2px;
+  left:-2px;
+  width:13px;
+  height:13px;
+  border-radius:50%;
+  background:linear-gradient(180deg,#c4e2ff,#92bcff);
+}
+#iris-v37-pet .leg{
+  position:absolute;
+  top:81px;
+  width:9px;
+  height:19px;
+  border-radius:999px;
+  background:linear-gradient(180deg,#95c0ff,#668aec);
+  transform-origin:top center;
+}
+#iris-v37-pet .leg.l{ left:36px; }
+#iris-v37-pet .leg.r{ left:49px; }
+#iris-v37-pet .foot{
+  position:absolute;
+  bottom:-2px;
+  left:-4px;
+  width:15px;
+  height:9px;
+  border-radius:999px;
+  background:linear-gradient(180deg,#c2dfff,#8fbaff);
+}
+
+#iris-v37-pet.walk .leg.l{ animation:iris37-leg-a .34s linear infinite; }
+#iris-v37-pet.walk .leg.r{ animation:iris37-leg-b .34s linear infinite; }
+#iris-v37-pet.walk .arm.l{ animation:iris37-arm-a .34s linear infinite; }
+#iris-v37-pet.walk .arm.r{ animation:iris37-arm-b .34s linear infinite; }
+#iris-v37-pet.wave .arm.r{ animation:iris37-wave .66s ease-in-out infinite; }
+#iris-v37-pet.research .tail{ animation:iris37-tail .9s ease-in-out infinite; }
+#iris-v37-pet.work .arm.r{ animation:iris37-type .44s ease-in-out infinite; }
+#iris-v37-pet.sleep .eye{
+  height:2px;
+  top:34px;
+  border-radius:999px;
+  box-shadow:none;
+}
+#iris-v37-pet.sleep .mouth{
+  top:39px;
+  width:7px;
+  height:3px;
+  border:none;
+  background:rgba(255,255,255,.88);
+  border-radius:999px;
+}
+#iris-v37-pet.blink .eye{ animation:iris37-blink .18s linear 1; }
+
+#iris-v37-bubble{
+  position:fixed;
+  left:0;
+  top:0;
+  max-width:160px;
+  padding:8px 12px;
+  border-radius:16px;
+  border:1px solid rgba(132,170,255,.16);
+  background:rgba(9,17,38,.94);
+  color:#eef5ff;
+  font:600 13px/1.2 -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;
+  box-shadow:0 12px 30px rgba(0,0,0,.28);
+  opacity:0;
+  transform:translateY(6px);
+  transition:opacity .16s ease, transform .16s ease;
+  pointer-events:none;
+}
+#iris-v37-bubble.show{
+  opacity:1;
+  transform:translateY(0);
+}
+
+@keyframes iris37-breathe{
+  0%,100%{ transform:translateY(0) scale(1); }
+  50%{ transform:translateY(-2px) scale(1.01); }
+}
+@keyframes iris37-shadow{
+  0%,100%{ transform:scaleX(1); opacity:.44; }
+  50%{ transform:scaleX(.9); opacity:.32; }
+}
+@keyframes iris37-leg-a{
+  0%,100%{ transform:rotate(14deg); }
+  50%{ transform:rotate(-14deg); }
+}
+@keyframes iris37-leg-b{
+  0%,100%{ transform:rotate(-14deg); }
+  50%{ transform:rotate(14deg); }
+}
+@keyframes iris37-arm-a{
+  0%,100%{ transform:rotate(-4deg); }
+  50%{ transform:rotate(18deg); }
+}
+@keyframes iris37-arm-b{
+  0%,100%{ transform:rotate(18deg); }
+  50%{ transform:rotate(-4deg); }
+}
+@keyframes iris37-wave{
+  0%,100%{ transform:rotate(-12deg); }
+  50%{ transform:rotate(-54deg); }
+}
+@keyframes iris37-type{
+  0%,100%{ transform:rotate(-8deg); }
+  50%{ transform:rotate(26deg); }
+}
+@keyframes iris37-tail{
+  0%,100%{ transform:rotate(-8deg); }
+  50%{ transform:rotate(14deg); }
+}
+@keyframes iris37-blink{
+  0%,100%{ transform:scaleY(1); }
+  50%{ transform:scaleY(.08); }
+}

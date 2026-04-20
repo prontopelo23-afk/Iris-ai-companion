@@ -1,0 +1,5 @@
+#!/bin/bash
+set -euo pipefail
+launchctl bootout "gui/$(id -u)" "/Users/karmaswoop/Library/LaunchAgents/com.iris.v3.companion.plist" >/dev/null 2>&1 || true
+pkill -f "/Users/karmaswoop/AI-Local/iris_v3_companion/py/server.py" >/dev/null 2>&1 || true
+echo "IRIS v3 arrêté"

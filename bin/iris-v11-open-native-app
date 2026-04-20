@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+APP_BUNDLE="/Applications/IRIS.app"
+
+if [ ! -d "$APP_BUNDLE" ]; then
+  echo "IRIS app bundle introuvable: $APP_BUNDLE" >&2
+  exit 1
+fi
+
+exec open -a "$APP_BUNDLE"

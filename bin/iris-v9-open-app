@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+URL="http://127.0.0.1:8876/"
+PROFILE_DIR="$HOME/.iris-v9-app-shell"
+mkdir -p "$PROFILE_DIR"
+
+EXES=(
+  "/Applications/Opera.app/Contents/MacOS/Opera"
+  "/Applications/Opera One.app/Contents/MacOS/Opera"
+  "$HOME/Applications/Opera.app/Contents/MacOS/Opera"
+  "$HOME/Applications/Opera One.app/Contents/MacOS/Opera"
+  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+  "$HOME/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+  "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser"
+  "$HOME/Applications/Brave Browser.app/Contents/MacOS/Brave Browser"
+  "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge"
+  "$HOME/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge"
+  "/Applications/Chromium.app/Contents/MacOS/Chromium"
+  "$HOME/Applications/Chromium.app/Contents/MacOS/Chromium"
+)
+
+for EXE in "${EXES[@]}"; do
+  if [ -x "$EXE" ]; then
+    "$EXE" \
+      --app="$URL" \
+      --user-data-dir="$PROFILE_DIR" \
+      --new-window \
+      --window-size=1650,1050 \
+      --disable-session-crashed-bubble \
+      --no-first-run \
+      --no-default-browser-check \
+      >/dev/null 2>&1 &
+    disown || true
+    exit 0
+  fi
+done
+
+/usr/bin/open "$URL"

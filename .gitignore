@@ -1,0 +1,12 @@
+venv/
+vendor/
+__pycache__/
+*.log
+logs/
+archive/
+.DS_Store
+.env
+dist/
+*.app
+.build/
+build/

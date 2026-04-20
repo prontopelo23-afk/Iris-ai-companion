@@ -1,0 +1,6 @@
+#!/Users/karmaswoop/AI-Local/iris_v3_companion/.native-shell-venv/bin/python
+import sys
+from bottle import main
+if __name__ == '__main__':
+    sys.argv[0] = sys.argv[0].removesuffix('.exe')
+    sys.exit(main())

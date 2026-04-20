@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+exec "$HOME/AI-Local/iris_v3_companion/bin/iris-v11-open-native-app"
