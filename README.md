@@ -1,37 +1,74 @@
-# IRIS AI Companion
+# 🧠 IRIS — Local AI Companion
 
-Experimental local AI system aiming to build a personal, modular AI companion.
+> Experimental system to build a **personal, modular, evolving AI companion** running locally.
 
-## Vision
+---
 
-IRIS is not just another AI tool.  
-The goal is to create a living, evolving system that can:
+## 🚀 Vision
 
-- interact naturally (voice / UI)
-- be modular and extensible
-- run locally (privacy-first)
-- integrate multiple AI components
+IRIS aims to go beyond traditional AI tools.
 
-## Current structure
+The goal is to create a **living AI system** that can:
+- 🗣️ Interact naturally (voice, UI, behavior)
+- 🧩 Be modular and extensible (plugins / agents)
+- 🔒 Run locally (privacy-first)
+- 🧠 Develop memory and autonomy over time
 
-- `py/` → backend logic
-- `ui/` → interface (web-based)
-- `native_shell/` → native integration (Mac)
-- `script/` → automation scripts
-- `spline_sources/` → visual/interactive assets
+---
 
-## Goals
+## 🏗️ Architecture
 
-- Build a real personal AI companion
-- Make it extensible (plugins / agents)
-- Improve interaction (voice, visuals, behavior)
-- Explore autonomy and memory
+iris/
+├── py/ # Backend logic (AI, orchestration)
+├── ui/ # Web interface
+├── native_shell/ # Native Mac integration
+├── script/ # Automation scripts
+├── spline_sources/ # Visual / interactive assets
+  
+  
 
-## Contributing
+---
 
-Open to ideas, feedback, and contributions.  
-Feel free to open issues or suggest improvements.
+## ⚡ Current Features
 
-## Status
+- Local AI execution
+- Modular structure (multi-components)
+- UI + backend separation
+- Native Mac integration (in progress)
 
-🚧 Work in progress / experimental
+---
+
+## 🔮 Roadmap
+
+- [ ] Voice interaction system
+- [ ] Persistent memory layer
+- [ ] Agent/plugin system
+- [ ] Real-time UI interactions
+- [ ] Autonomous behaviors
+
+---
+
+## 🤝 Contributing
+
+This project is experimental and open.
+
+Looking for:
+- 💡 ideas
+- 🧠 architecture feedback
+- 👨‍💻 contributors interested in AI systems
+
+👉 Feel free to open an issue or start a discussion.
+
+---
+
+## ⚠️ Disclaimer
+
+This is a **work in progress** project.  
+Expect breaking changes and rapid evolution.
+
+---
+
+## 🌌 Philosophy
+
+> IRIS is not just a tool.  
+> It’s an attempt to explore what a **personal AI companion** could become.
